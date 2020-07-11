@@ -8,6 +8,7 @@
 #include "./Jante/Jante.h"
 #include "./Pneu/Pneu.h"
 #include "./Carro/Carro.h"
+#include "./Pedidos/Pedidos.h"
 
 #define ERR_FOPEN "Error: could not open file."
 #define ERR_CORPT "Error: File is corrupted."
@@ -23,22 +24,25 @@ int main(int argc, char **argv)
 {
 	// declaracao das variaveis
 	int opcao=0;
-	char file[20];
+	char file[40];
 	QueueMotor listaMotores;
 	QueueChassi listaChassis;
 	QueueJante listaJante;
 	QueuePneu listaPneu;
+	QueuePedidos listaPedidos;
 
 	//inicializando listas
 	queueInitMotor(&listaMotores);
 	queueInitChassi(&listaChassis);
 	queueInitJante(&listaJante);
 	queueInitPneu(&listaPneu);
+	queueInitPedido(&listaPedidos);
 
 	if (argv[1]!=NULL && argc!=1)
 	{
-		leFicheiroInventario(&listaMotores,&listaChassis,&listaJante,&listaPneu,(char*)argv[1]);
-		//leFicheiroPedidosle(&listaPedidos,(char)argv[1]);
+		strcpy(file,argv[1]);
+		leFicheiroInventario(&listaMotores,&listaChassis,&listaJante,&listaPneu,file);
+		leFicheiroPedidos(&listaPedidos,file);
 	}
 
 	do
@@ -46,7 +50,12 @@ int main(int argc, char **argv)
 		printMenu();
 		do//pegando input e validando
 		{
-			scanf(" %d %s", &opcao,file);
+			scanf(" %d", &opcao);
+
+			if (opcao == 6 || opcao==7)
+			{
+				scanf(" %s",file);
+			}
 			
 			if (opcao<1 || opcao>8) printf("Invalid choice.Try again.");
 
@@ -73,13 +82,13 @@ int main(int argc, char **argv)
 				leFicheiroInventario(&listaMotores,&listaChassis,&listaJante,&listaPneu,file);
 				break;
 			case 7:
-				//leFicheiroPedidosle(&listaPedidos,argv[1]);
+				leFicheiroPedidos(&listaPedidos,file);
+				printQueuePedido(&listaPedidos);
 			default:
 				break;
 		}
 		
 	}while(opcao!=8);
-	puts("\n");
 }
 
 void printMenu ()

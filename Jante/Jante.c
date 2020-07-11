@@ -61,15 +61,12 @@ void printQueueJante(QueueJante *q)
 		printf(ERR_MEM);
 		return;
 	}
-	if (t == NULL){
-		printf(ERR_MEM);
-		return;
-	}
 		
 	for (t = q->head ; t->next != NULL ; t = t -> next)
 	{
-		printf("Jantes,%s,%d,%d,%s",t->numSerie,t->diametro,t->largura,t->color);
+		printf("Jantes,%s,%d,%d,%s\n",t->numSerie,t->diametro,t->largura,t->color);
 	}
+	printf("Jantes,%s,%d,%d,%s\n",q->tail->numSerie,q->tail->diametro,q->tail->largura,q->tail->color);
 }
 
 void printJante(Jante *jante)

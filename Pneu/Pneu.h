@@ -3,7 +3,7 @@
 
 typedef struct Pneu
 {
-	char numSerie[20];
+	char numSerie[21];
 	int diametro;
 	int largura;
 	int altura;

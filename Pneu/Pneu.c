@@ -61,8 +61,10 @@ void printQueuePneu(QueuePneu *q)
 		printf(ERR_MEM);
 		return;
 	}
-	for (t = q->head ; t->next != NULL ; t = t -> next)
+	for (t = q->head ; t->next != NULL ; t = t -> next){
 		printf("Pneus,%s,%d,%d,%d\n",t->numSerie,t->diametro,t->largura,t->altura);
+	}
+	printf("Pneus,%s,%d,%d,%d\n",q->tail->numSerie,q->tail->diametro,q->tail->largura,q->tail->altura);
 }
 
 void printPneu(Pneu *pneu)

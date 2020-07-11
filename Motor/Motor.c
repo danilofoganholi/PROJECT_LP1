@@ -58,9 +58,9 @@ void printQueueMotor(QueueMotor *q)
 		printf(ERR_MEM);
 	for (t = q->head ; t->next != NULL ; t = t -> next)
 	{
-		printf("Motor,%s,%d,%s",t->numSerie,t->potencia,t->type_of_fuel);
+		printf("Motor,%s,%d,%s\n",t->numSerie,t->potencia,t->type_of_fuel);
 	}
-	printf("Motor,%s,%d,%s",q->tail->numSerie,q->tail->potencia,q->tail->type_of_fuel);
+	printf("Motor,%s,%d,%s\n",q->tail->numSerie,q->tail->potencia,q->tail->type_of_fuel);
 }
 
 void printMotor(Motor *motor)

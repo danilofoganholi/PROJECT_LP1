@@ -8,7 +8,7 @@
 
 typedef struct Carro
 {
-	char numPedido[20];
+	char numPedido[21];
 	struct Motor *motor;
 	struct Chassi *chassi;
 	struct Jante *jante;

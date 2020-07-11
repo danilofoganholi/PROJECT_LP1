@@ -3,7 +3,7 @@
 
 typedef struct Jante
 {
-	char numSerie[20];
+	char numSerie[21];
 	int diametro;
 	int largura;
 	char color[10];

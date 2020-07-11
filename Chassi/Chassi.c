@@ -57,8 +57,9 @@ void printQueueChassi(QueueChassi *q)
 		printf(ERR_MEM);
 	for (t = q->head ; t->next != NULL ; t = t -> next)
 	{
-		printf("Chassis,%s,%s,%s",t->numSerie,t->color,t->modelo);
+		printf("Chassis,%s,%s,%s\n",t->numSerie,t->color,t->modelo);
 	}
+	printf("Chassis,%s,%s,%s\n",q->tail->numSerie,q->tail->color,q->tail->modelo);
 }
 
 void printChassi(Chassi *chassi)

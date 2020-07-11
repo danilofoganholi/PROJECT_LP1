@@ -3,7 +3,7 @@
 
 typedef struct Chassi
 {
-	char numSerie[20];
+	char numSerie[21];
 	char modelo[128];
 	char color[10];
 	struct Chassi *next;
