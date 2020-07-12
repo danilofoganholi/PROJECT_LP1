@@ -34,6 +34,7 @@ typedef struct
 	Pedido * head, *tail;
 }QueuePedidos;
 
+void printPedido(Pedido *);
 void queueInitPedido(QueuePedidos *);
 void queueInsertPedido (QueuePedidos *, Pedido);
 void queueRemovePedido(QueuePedidos*,Pedido);

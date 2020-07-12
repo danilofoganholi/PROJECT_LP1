@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <assert.h>
 #include "./Motor/Motor.h"
 #include "./Chassi/Chassi.h"
 #include "./Jante/Jante.h"
@@ -112,19 +111,16 @@ QueueJante *listaJante,QueuePneu *listaPneu, char* file)
 
 	if (filePointer == NULL)
 	{
-		printf(ERR_FOPEN);
+		puts(ERR_FOPEN);
 		return;
 	}
-
 	while(!feof(filePointer))
 	{
 		char type[6];
 		
-		fscanf(filePointer, " %5s",type);
-
-		// printf("MOTOR = {%s;%s;%s}\n",numSerie,potencia,fuel);
-
-		if (strcmp(type,"Motor")==0)
+		fscanf(filePointer, "%5s",type);
+		
+		if (strncmp(type,"Motor",1)==0)
 		{
 			struct Motor* aux = pegaMotor(filePointer);
 			queueInsertMotor(listaMotores,*aux);
@@ -164,19 +160,19 @@ void leFicheiroPedidos(QueuePedidos *listaPedidos,char* file)
 	{
 		char numPedido[21];
 
-		char MotorPotencia[5];
-		char Motor_fuel[9];
+		char MotorPotencia[5]="";
+		char Motor_fuel[9]="";
 
-		char ChassiColor[10];
-		char ChassiModelo[128];
+		char ChassiColor[10]="";
+		char ChassiModelo[128]="";
 
-		char JanteDiametro[4];
-		char JanteLargura[4];
-		char JanteColor[10];
+		char JanteDiametro[4]="";
+		char JanteLargura[4]="";
+		char JanteColor[10]="";
 
-		char PneuDiametro[4];
-		char PneuLargura[4];
-		char PneuAltura[4];
+		char PneuDiametro[4]="";
+		char PneuLargura[4]="";
+		char PneuAltura[4]="";
 
 		fscanf(filePointer,"%20s",numPedido);
 
@@ -205,14 +201,42 @@ void leFicheiroPedidos(QueuePedidos *listaPedidos,char* file)
 		strcpy(tmp->numPedido, numPedido);
 
 		tmp->Motorpotencia = atoi(MotorPotencia);
-		strcpy(tmp->Motor_fuel,Motor_fuel);
+		if (strlen(Motor_fuel)>2)
+		{
+			strcpy(tmp->Motor_fuel,Motor_fuel);
+		}else
+		{
+			tmp->Motor_fuel[0] = '\0';
+		}
 
-		strcpy(tmp->ChassiColor,ChassiColor);
-		strcpy(tmp->ChassiModelo,ChassiModelo);
+		
+		if (strlen(ChassiColor)>2)
+		{
+			strcpy(tmp->ChassiColor,ChassiColor);
+		}else
+		{
+			tmp->ChassiColor[0] = '\0';
+		}
+
+		
+		if (strlen(ChassiModelo)>2)
+		{
+			strcpy(tmp->ChassiModelo,ChassiModelo);
+		}else
+		{
+			tmp->ChassiModelo[0] = '\0';
+		}
 
 		tmp->JanteDiametro = atoi(JanteDiametro);
 		tmp->JanteLargura = atoi(JanteLargura);
-		strcpy(tmp->JanteColor, JanteColor);
+		
+		if (strlen(JanteColor)>2)
+		{
+			strcpy(tmp->JanteColor, JanteColor);
+		}else
+		{
+			tmp->JanteColor[0] = '\0';
+		}
 
 		tmp->PneuDiametro = atoi(PneuDiametro);
 		tmp->PneuLargura = atoi(PneuLargura);

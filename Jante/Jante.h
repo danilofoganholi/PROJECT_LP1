@@ -17,8 +17,10 @@ typedef struct
 
 void queueInitJante(QueueJante *);
 void queueInsertJante (QueueJante *, Jante);
-void queueRemoveJante(QueueJante*,Jante);
+int queueRemoveJante(QueueJante*,Jante);
 void printQueueJante(QueueJante *);
 void printJante(Jante *);
+int countQueueJante(QueueJante *);
+void escreveJanteInventario(QueueJante*,char*);
 
 #endif

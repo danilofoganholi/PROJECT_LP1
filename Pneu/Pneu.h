@@ -17,8 +17,10 @@ typedef struct
 
 void queueInitPneu(QueuePneu *);
 void queueInsertPneu (QueuePneu *, Pneu);
-void queueRemovePneu(QueuePneu*,Pneu);
+int queueRemovePneu(QueuePneu*,Pneu);
 void printQueuePneu(QueuePneu *);
 void printPneu(Pneu *);
+int countQueuePneu(QueuePneu *);
+void escrevePneuInventario(QueuePneu*,char*);
 
 #endif

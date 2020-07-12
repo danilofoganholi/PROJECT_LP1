@@ -64,3 +64,24 @@ void printQueuePedido(QueuePedidos *q)
 		q->tail->JanteDiametro,q->tail->JanteLargura,q->tail->JanteColor,q->tail->PneuDiametro,
 		q->tail->PneuLargura,q->tail->PneuAltura);
 }
+
+void printPedido(Pedido *q)
+{
+	printf("%s = {%d,%s} ; {%s,%s} ; {%d,%d,%s} ; {%d,%d,%d}\n",
+		q->numPedido,q->Motorpotencia,q->Motor_fuel,q->ChassiColor,q->ChassiModelo,
+		q->JanteDiametro,q->JanteLargura,q->JanteColor,q->PneuDiametro,
+		q->PneuLargura,q->PneuAltura);
+}
+
+int countQueuePedido(QueuePedidos *q)
+{
+	int count=0;
+	Pedido *t = (Pedido*) malloc(sizeof(Pedido));
+	if (t == NULL)
+		printf(ERR_MEM);
+	for (t = q->head ; t != NULL ; t = t -> next)
+	{
+		count++;
+	}
+	return count;
+}

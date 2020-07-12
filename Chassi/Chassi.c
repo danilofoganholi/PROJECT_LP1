@@ -32,11 +32,23 @@ void queueInsertChassi (QueueChassi *q, Chassi chassi )
 	q->tail=tmp;
 }
 
-void queueRemoveChassi (QueueChassi *q, Chassi chassi )
+int queueRemoveChassi (QueueChassi *q, Chassi chassi )
 {
 	Chassi *t = (Chassi*) malloc(sizeof(Chassi));
 	if (t == NULL)
+	{
 		printf(ERR_MEM);
+		return 0;
+	}
+		
+	if (strcmp(q->head->numSerie,chassi.numSerie)==0)
+	{
+		Chassi *aux = q->head;
+		q->head=q->head->next;
+		free(aux);
+		return 1;
+	}
+
 	for (t = q->head ; t->next != NULL ; t = t -> next)
 	{
 		if (strncmp(t->next->numSerie,chassi.numSerie,20)==0)
@@ -44,8 +56,10 @@ void queueRemoveChassi (QueueChassi *q, Chassi chassi )
 			Chassi *aux = t->next;
 			t->next = t->next->next;
 			free(aux);
+			return 1;
 		}
 	}
+	return 0;
 }
 
 void printQueueChassi(QueueChassi *q)
@@ -65,4 +79,35 @@ void printQueueChassi(QueueChassi *q)
 void printChassi(Chassi *chassi)
 {
 	printf("%s,%s,%s",chassi->numSerie,chassi->color,chassi->modelo);
+}
+
+int countQueueChassi(QueueChassi *q)
+{
+	int count=0;
+	Chassi *t = (Chassi*) malloc(sizeof(Chassi));
+	if (t == NULL)
+		printf(ERR_MEM);
+	for (t = q->head ; t != NULL ; t = t -> next)
+	{
+		count++;
+	}
+	return count;
+}
+
+void escreveChassiInventario(QueueChassi *q, char* file)
+{
+	Chassi *t = (Chassi*) malloc(sizeof(Chassi));
+	if (t == NULL)
+		printf(ERR_MEM);
+
+	FILE * filepointer= fopen(file, "a");
+
+	for (t = q->head ; t->next != NULL ; t = t -> next)
+	{
+		fprintf(filepointer,"Chassis,%s,%s,%s\n",t->numSerie,t->color,t->modelo);	
+	}
+
+	fprintf(filepointer,"Chassis,%s,%s,%s\n",q->tail->numSerie,q->tail->color,q->tail->modelo);
+
+	fclose(filepointer);
 }

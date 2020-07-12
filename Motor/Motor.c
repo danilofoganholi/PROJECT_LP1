@@ -32,20 +32,35 @@ void queueInsertMotor (QueueMotor *q, Motor motor )
 	q->tail=tmp;
 }
 
-void queueRemoveMotor (QueueMotor *q, Motor motor )
+int queueRemoveMotor (QueueMotor *q, Motor motor )
 {
 	Motor *t = (Motor*) malloc(sizeof(Motor));
 	if (t == NULL)
-		printf(ERR_MEM);
-	for (t = q->head ; t->next != NULL ; t = t -> next)
 	{
-		if (strncmp(t->next->numSerie,motor.numSerie,20)==0)
+		printf(ERR_MEM);
+		return 0;
+	}
+	
+	if (strcmp(q->head->numSerie,motor.numSerie)==0)
+	{
+		Motor *aux = q->head;
+		q->head=q->head->next;
+		free(aux);
+		return 5;
+	}else{
+
+		for (t = q->head ; t->next != NULL ; t = t -> next)
 		{
-			Motor *aux = t->next;
-			t->next = t->next->next;
-			free(aux);
+			if (strcmp(t->next->numSerie,motor.numSerie)==0)
+			{
+				Motor *aux = t->next;
+				t->next = t->next->next;
+				free(aux);
+				return 1;
+			}
 		}
 	}
+	return 0;
 }
 
 void printQueueMotor(QueueMotor *q)
@@ -67,3 +82,36 @@ void printMotor(Motor *motor)
 {
 	printf("%s,%d,%s",motor->numSerie,motor->potencia,motor->type_of_fuel);
 }
+
+int countQueueMotor(QueueMotor *q)
+{
+	int count=0;
+	Motor *t = (Motor*) malloc(sizeof(Motor));
+	if (t == NULL)
+		printf(ERR_MEM);
+	for (t = q->head ; t != NULL ; t = t -> next)
+	{
+		count++;
+	}
+	return count;
+}
+
+void escreveMotoresInventario(QueueMotor *q, char* file)
+{
+	Motor *t = (Motor*) malloc(sizeof(Motor));
+	if (t == NULL)
+		printf(ERR_MEM);
+
+	FILE * filepointer= fopen(file, "a");
+
+	for (t = q->head ; t->next != NULL ; t = t -> next)
+	{
+		fprintf(filepointer,"Motor,%s,%d,%s\n",t->numSerie,t->potencia,t->type_of_fuel);	
+	}
+
+	fprintf(filepointer,"Motor,%s,%d,%s\n",q->tail->numSerie,q->tail->potencia,q->tail->type_of_fuel);
+
+	fclose(filepointer);
+}
+
+

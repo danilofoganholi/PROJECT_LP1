@@ -16,8 +16,10 @@ typedef struct
 
 void queueInitMotor( QueueMotor *);
 void queueInsertMotor ( QueueMotor *, Motor);
-void queueRemove(QueueMotor*,Motor);
+int queueRemoveMotor (QueueMotor *, Motor);
 void printQueueMotor(QueueMotor *);
 void printMotor(Motor *);
+int countQueueMotor(QueueMotor *);
+void escreveMotoresInventario(QueueMotor*, char*);
 
 #endif

@@ -16,8 +16,10 @@ typedef struct
 
 void queueInitChassi(QueueChassi *);
 void queueInsertChassi (QueueChassi *, Chassi);
-void queueRemoveChassi(QueueChassi*,Chassi);
+int queueRemoveChassi(QueueChassi*,Chassi);
 void printQueueChassi(QueueChassi *);
 void printChassi(Chassi *);
+int countQueueChassi(QueueChassi *);
+void escreveChassiInventario(QueueChassi*,char*);
 
 #endif
