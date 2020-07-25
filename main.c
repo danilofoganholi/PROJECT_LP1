@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "./Motor/Motor.h"
-#include "./Chassi/Chassi.h"
-#include "./Jante/Jante.h"
-#include "./Pneu/Pneu.h"
-#include "./Carro/Carro.h"
-#include "./Pedidos/Pedidos.h"
+#include "Motor.h"
+#include "Chassi.h"
+#include "Jante.h"
+#include "Pneu.h"
+#include "Carro.h"
+#include "Pedidos.h"
 #include "producao.h"
 #include "readFiles.h"
 
@@ -26,7 +26,7 @@ void escreverFicheiroInventario(QueueMotor *,QueueChassi *,QueueJante *,QueuePne
 int main(int argc, char **argv)
 {
 	// declaracao das variaveis
-	int opcao=0;
+	char opcao[6];
 	char file[40];
 	QueueMotor listaMotores;
 	QueueChassi listaChassis;
@@ -49,90 +49,92 @@ int main(int argc, char **argv)
 	{
 		leFicheiroInventario(&listaMotores,&listaChassis,&listaJante,&listaPneu,argv[1]);
 		leFicheiroPedidos(&listaPedidos,argv[1]);
-		strcpy(file,argv[1]);
 	}
 
 	do
 	{
 		printMenu();
-		do//pegando input e validando
-		{
-			scanf(" %d", &opcao);
 
-			if (opcao == 6 || opcao==7)
+		scanf(" %5s", opcao);
+
+		if (strcmp(opcao,"write")==0 || strcmp(opcao,"ro")==0 || strcmp(opcao,"rs")==0)
+		{
+			scanf(" %39s",file);
+			printf("file = /%s/\n",file);
+		}
+
+		if (strcmp(opcao,"prod")==0)
+		{
+			if (isEmpty(&listaMotores,&listaChassis,&listaJante,&listaPneu,&listaPedidos))
 			{
-				scanf(" %s",file);
+				puts(ERR_NO_FILES);
+			}else
+			{
+				iniciarProducao(&listaMotores,&listaChassis,&listaJante,&listaPneu,
+				&listaCarrosProduzidos,&listaCarrosNaoProduzidos,listaPedidos);
 			}
-			
-			if (opcao<1 || opcao>8) printf("Invalid choice.Try again.");
-
-		} while (opcao<1 || opcao>8);
-
-		switch (opcao)
+		}else if (strcmp(opcao,"show")==0)
 		{
-			case 1:
-				if (isEmpty(&listaMotores,&listaChassis,&listaJante,&listaPneu,&listaPedidos))
-				{
-					puts(ERR_NO_FILES);
-				}else
-				{
-					iniciarProducao(&listaMotores,&listaChassis,&listaJante,&listaPneu,
-					&listaCarrosProduzidos,&listaCarrosNaoProduzidos,listaPedidos);
-				}
-				break;
-			case 2:
-				mostraInventario(&listaMotores,&listaChassis,&listaJante,&listaPneu);
-				break;
-			case 3:
-				if (isEmptyCarro(&listaCarrosProduzidos))
-				{
-					puts(WARN_NO_PRODUCTION_INIT);
-				}else
-				{
-					printQueueCarro(&listaCarrosProduzidos);
-				}
-				break;
-			case 4:
-				if (isEmptyCarro(&listaCarrosNaoProduzidos))
-				{
-					puts(WARN_NO_PRODUCTION_INIT);
-				}else
-				{
-					printQueueCarroEspecial(&listaCarrosNaoProduzidos);
-				}
-				break;
-			case 5:
+			mostraInventario(&listaMotores,&listaChassis,&listaJante,&listaPneu);
+		}else if (strcmp(opcao,"done")==0)
+		{
+			if (isEmptyCarro(&listaCarrosProduzidos))
+			{
+				puts(WARN_NO_PRODUCTION_INIT);
+			}else
+			{
+				printQueueCarro(&listaCarrosProduzidos);
+			}		
+		}else if (strcmp(opcao,"todo")==0)
+		{
+			if (isEmptyCarro(&listaCarrosNaoProduzidos))
+			{
+				puts(WARN_NO_PRODUCTION_INIT);
+			}else
+			{
+				printQueueCarroEspecial(&listaCarrosNaoProduzidos);
+			}
+		}else if (strcmp(opcao,"write")==0)
+		{
+			if (countQueueCarro(&listaCarrosProduzidos)>0 || countQueueCarro(&listaCarrosNaoProduzidos)>0)
+			{
 				escreverFicheiroInventario(&listaMotores,&listaChassis,&listaJante,&listaPneu,file);
 				escreveCarroProduzidos(&listaCarrosProduzidos,file);
 				escreveCarroNaoProduzidos(&listaCarrosNaoProduzidos,file);
-				break;
-			case 6:
-				leFicheiroInventario(&listaMotores,&listaChassis,&listaJante,&listaPneu,file);
-				break;
-			case 7:
-				leFicheiroPedidos(&listaPedidos,file);
-				break;
-			case 8:
-				break;
-			default:
-				puts(ERR_ARGS);
-				break;
+			}else
+			{
+				puts(WARN_NO_PRODUCTION_INIT);
+			}
+			
+		}else if (strcmp(opcao,"rs")==0)
+		{
+			leFicheiroInventario(&listaMotores,&listaChassis,&listaJante,&listaPneu,file);		
+		}else if (strcmp(opcao,"ro")==0)
+		{
+			leFicheiroPedidos(&listaPedidos,file);		
+		}else if (strcmp(opcao,"sos")==0 || strcmp(opcao,"bye")==0)
+		{
+			continue;
+		}else
+		{
+			puts(ERR_ARGS);
 		}
 		
-	}while(opcao!=8);
+	}while(strcmp(opcao,"bye")!=0);
 }
 
 void printMenu ()
 {
 	printf("**********Autolusofona***********\n");
-	printf("1. Iniciar producao\n");
-	printf("2. Mostrar inventario atual\n");
-	printf("3. Mostrar pedidos satisfeitos\n");
-	printf("4. Mostrar pedidos insatisfeitos\n");
-	printf("5. Escrever ficheiros atualizados\n");
-	printf("6. Ler ficheiro de inventario\n");
-	printf("7. Ler ficheiro de pedidos\n");
-	printf("8. Sair\n");
+	printf("prod . Iniciar producao\n");
+	printf("show . Mostrar inventario atual\n");
+	printf("done . Mostrar pedidos satisfeitos\n");
+	printf("todo . Mostrar pedidos insatisfeitos\n");
+	printf("write <basename> . Escrever ficheiros atualizados\n");
+	printf("rs <basename> . Ler ficheiro de inventario\n");
+	printf("ro <basename> . Ler ficheiro de pedidos\n");
+	printf("bye . Sair\n");
+	printf("sos . Mostrar o menu\n");
 	printf("*********************************\n");
 }
 
@@ -150,10 +152,10 @@ QueueJante *listaJante,QueuePneu *listaPneu, QueuePedidos *listaPedidos)
 void mostraInventario(QueueMotor *listaMotores,QueueChassi *listaChassi,
 QueueJante *listaJante,QueuePneu *listaPneu)
 {
-	printQueueMotor(listaMotores);
-	printQueueChassi(listaChassi);
+	// printQueueMotor(listaMotores);
+	// printQueueChassi(listaChassi);
 	printQueueJante(listaJante);
-	printQueuePneu(listaPneu);
+	// printQueuePneu(listaPneu);
 }
 
 void escreverFicheiroInventario(QueueMotor *listaMotores,QueueChassi *listaChassi,

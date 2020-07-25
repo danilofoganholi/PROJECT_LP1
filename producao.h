@@ -1,12 +1,12 @@
 #ifndef __producao_h__
 #define __producao_h__
 
-#include "./Motor/Motor.h"
-#include "./Chassi/Chassi.h"
-#include "./Jante/Jante.h"
-#include "./Pneu/Pneu.h"
-#include "./Carro/Carro.h"
-#include "./Pedidos/Pedidos.h"
+#include "Motor.h"
+#include "Chassi.h"
+#include "Jante.h"
+#include "Pneu.h"
+#include "Carro.h"
+#include "Pedidos.h"
 
 int possuiPecaMotor(QueueMotor*,Pedido,Carro*);
 int possuiPecaChassi(QueueChassi*,Pedido,Carro*);

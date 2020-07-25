@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "./Motor/Motor.h"
-#include "./Chassi/Chassi.h"
-#include "./Jante/Jante.h"
-#include "./Pneu/Pneu.h"
-#include "./Carro/Carro.h"
+#include "Motor.h"
+#include "Chassi.h"
+#include "Jante.h"
+#include "Pneu.h"
+#include "Carro.h"
 #include "readFiles.h"
 
 #define ERR_FOPEN "Error: could not open file."
@@ -176,19 +176,19 @@ void leFicheiroPedidos(QueuePedidos *listaPedidos,char* file)
 
 		fscanf(filePointer,"%20s",numPedido);
 
-		fscanf(filePointer,";%[^,]s",MotorPotencia);
-		fscanf(filePointer,",%[^;]s",Motor_fuel);
+		fscanf(filePointer,";%4[^,]s",MotorPotencia);//4
+		fscanf(filePointer,",%8[^;]s",Motor_fuel);//8
 
-		fscanf(filePointer,";%[^,]s",ChassiColor);
-		fscanf(filePointer,",%[^;]s",ChassiModelo);
+		fscanf(filePointer,";%9[^,]s",ChassiColor);//9
+		fscanf(filePointer,",%127[^;]s",ChassiModelo);//127
 
-		fscanf(filePointer,";%[^,]s",JanteDiametro);
-		fscanf(filePointer,",%[^,]s",JanteLargura);
-		fscanf(filePointer,",%[^;]s",JanteColor);
+		fscanf(filePointer,";%3[^,]s",JanteDiametro);//3
+		fscanf(filePointer,",%3[^,]s",JanteLargura);//3
+		fscanf(filePointer,",%9[^;]s",JanteColor);//9
 
-		fscanf(filePointer,";%[^,]s",PneuDiametro);
-		fscanf(filePointer,",%[^,]s",PneuLargura);
-		fscanf(filePointer,",%[^\n]s",PneuAltura);
+		fscanf(filePointer,";%3[^,]s",PneuDiametro);//3
+		fscanf(filePointer,",%3[^,]s",PneuLargura);//3
+		fscanf(filePointer,",%3[^\n]s",PneuAltura);//3
 
 		Pedido *tmp = (Pedido *) malloc(sizeof(Pedido));
 		if (tmp == NULL)

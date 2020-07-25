@@ -1,6 +1,6 @@
 CC=gcc
 FLAGS= -Wall -Wpedantic -Wextra -std=c99 -Wvla
-SOURCE=main.c ./Motor/Motor.c ./Chassi/Chassi.c ./Jante/Jante.c ./Pneu/Pneu.c ./Carro/Carro.c readFiles.c ./Pedidos/Pedidos.c producao.c
+SOURCE=main.c Motor.c Chassi.c Jante.c Pneu.c Carro.c readFiles.c Pedidos.c producao.c
 TARGET=LP1
 
 all:

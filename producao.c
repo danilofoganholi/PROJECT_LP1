@@ -14,25 +14,22 @@ void iniciarProducao (QueueMotor *listaMotores,QueueChassi *listaChassis,
 QueueJante *listaJantes,QueuePneu *listaPneus,QueueCarro *listaCarrosProduzidos,
 QueueCarro *listaCarrosNaoProduzidos, QueuePedidos listaPedidos)
 {
-	int pussuiMotor;
-	int possuiChassi;
-	int possuiJantes;
-	int possuiPneu;
-	
 	Pedido *pedido = (Pedido*) malloc(sizeof(Pedido));
 	Carro *aux = (Carro*) malloc(sizeof(Carro));
 	if (pedido == NULL || aux==NULL)
 	{
 		printf(ERR_MEM);
+		free(pedido);
+		free(aux);
 		return;
 	}
 	
 	for (pedido = listaPedidos.head ; pedido->next != NULL ; pedido = pedido -> next)
 	{
-		pussuiMotor = possuiPecaMotor(listaMotores,*pedido,aux);
-		possuiChassi = possuiPecaChassi(listaChassis,*pedido,aux);
-		possuiJantes = possuiPecaJantes(listaJantes,*pedido,aux);
-		possuiPneu = possuiPecaPneus(listaPneus,*pedido,aux);
+		int pussuiMotor = possuiPecaMotor(listaMotores,*pedido,aux);
+		int possuiChassi = possuiPecaChassi(listaChassis,*pedido,aux);
+		int possuiJantes = possuiPecaJantes(listaJantes,*pedido,aux);
+		int possuiPneu = possuiPecaPneus(listaPneus,*pedido,aux);
 
 		strcpy(aux->numPedido,pedido->numPedido);
 
@@ -41,25 +38,21 @@ QueueCarro *listaCarrosNaoProduzidos, QueuePedidos listaPedidos)
 			aux->estado=1;
 			queueInsertCarro(listaCarrosProduzidos,*aux);
 
-			// int teste = queueRemoveMotor(listaMotores, *aux->motor);
-
-			// printf("queueRemoveMotor = %d\n",teste);
-
 			if(queueRemoveMotor(listaMotores, *aux->motor)==0)
 			{
-				printf("MOTOR  = %s\n",aux->motor->numSerie);
+				//printf("MOTOR  = %s\n",aux->motor->numSerie);
 			}
-			if(!queueRemoveChassi(listaChassis,*aux->chassi))
+			if(queueRemoveChassi(listaChassis,*aux->chassi)==0)
 			{
-				printf("CHASSI = %s\n",aux->chassi->numSerie);
+				//printf("CHASSI = %s\n",aux->chassi->numSerie);
 			}
-			if(!queueRemoveJante(listaJantes,*aux->jante))
+			if(queueRemoveJante(listaJantes,*aux->jante)==0)
 			{
-				printf("JANTE  = %s\n",aux->jante->numSerie);
+				//printf("JANTE  = %s\n",aux->jante->numSerie);
 			}
-			if(!queueRemovePneu(listaPneus, *aux->pneu))
+			if(queueRemovePneu(listaPneus, *aux->pneu)==0)
 			{
-				printf("PNEU   = %s\n",aux->pneu->numSerie);
+				//printf("PNEU   = %s\n",aux->pneu->numSerie);
 			}
 		}else
 		{
@@ -147,6 +140,8 @@ QueueCarro *listaCarrosNaoProduzidos, QueuePedidos listaPedidos)
 			queueInsertCarro(listaCarrosNaoProduzidos,*aux);
 		}
 	}
+	free(pedido);
+	free(aux);
 }
 
 int possuiPecaMotor(QueueMotor *listaMotores,Pedido t,Carro*aux)
@@ -165,6 +160,7 @@ int possuiPecaMotor(QueueMotor *listaMotores,Pedido t,Carro*aux)
 		strcpy(motor->numSerie,listaMotores->head->numSerie);
 
 		aux->motor= motor;
+		free(tmp);
 		return 1;
 	}else{
 		for (tmp = listaMotores->head ; tmp->next != NULL ; tmp = tmp -> next)
@@ -207,6 +203,7 @@ int possuiPecaChassi(QueueChassi *listaChassis,Pedido t,Carro*aux)
 		strcpy(chassi->modelo,listaChassis->head->modelo);
 
 		aux->chassi= chassi;
+		free(tmp);
 		return 1;
 
 	}else
@@ -219,7 +216,7 @@ int possuiPecaChassi(QueueChassi *listaChassis,Pedido t,Carro*aux)
 			strcmp(t.ChassiColor,tmp->color) && strcmp(t.ChassiModelo,tmp->modelo)==0))
 			{
 				Chassi *chassi = (Chassi*) malloc(sizeof(Chassi));
-				if (tmp == NULL)
+				if (chassi == NULL)
 					printf(ERR_MEM);
 
 				strcpy(chassi->numSerie,tmp->numSerie);
@@ -252,6 +249,7 @@ int possuiPecaJantes(QueueJante *listaJante,Pedido t,Carro*aux)
 		strcpy(jante->color,listaJante->head->color);
 
 		aux->jante= jante;
+		free(tmp);
 		return 1;
 	}else
 	{
@@ -372,6 +370,7 @@ int possuiPecaJantes(QueueJante *listaJante,Pedido t,Carro*aux)
 			}
 		}
 	}
+	free(tmp);
 	return 0;	
 }
 
@@ -379,20 +378,20 @@ int possuiPecaPneus(QueuePneu *listaPneu,Pedido t,Carro*aux)
 {
 	Pneu *tmp = (Pneu*) malloc(sizeof(Pneu));
 	if (tmp == NULL)
+	{
 		printf(ERR_MEM);
+		free(tmp);
+		return 0;
+	}
 
 	if (t.PneuDiametro==0 && t.PneuLargura==0 && t.PneuAltura==0)
 	{
-		Pneu *pneu = (Pneu*) malloc(sizeof(Pneu));
-		if (pneu == NULL)
-			printf(ERR_MEM);
+		strcpy(tmp->numSerie,listaPneu->head->numSerie);
+		tmp->diametro=listaPneu->head->diametro;
+		tmp->largura=listaPneu->head->largura;
+		tmp->altura=listaPneu->head->altura;
 
-		strcpy(pneu->numSerie,listaPneu->head->numSerie);
-		pneu->diametro=listaPneu->head->diametro;
-		pneu->largura=listaPneu->head->largura;
-		pneu->altura=listaPneu->head->altura;
-
-		aux->pneu= pneu;
+		aux->pneu= tmp;
 		return 1;
 	}else
 	{
@@ -513,5 +512,6 @@ int possuiPecaPneus(QueuePneu *listaPneu,Pedido t,Carro*aux)
 			}
 		}
 	}
+	free(tmp);
 	return 0;	
 }
