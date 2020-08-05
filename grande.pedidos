@@ -27,7 +27,7 @@ Mlg76lEbt8G1SiRsGjwZ;1200,Gasolina;Vermelho,Convertible;15,125,Verde;15,180,75
 khnZjodXbk8x0NfE60h6;1200,Hibrido;Cinzento,Coupe;17,210,Preto;17,170,50
 mKlxQu34IIqALH4hrhlP;1400,Gasoleo;Branco,Convertible;18,195,Cinzento;17,170,45
 pWMwAWcZt06VTzR8vLXv;1200,Eletrico;Cinzento,SUV;15,215,Verde;16,185,60
-upSkYkCp0DtcuQzVs1oo;1200,Gasoleo;Verde,Station_Wagon;18,180,Branco;17,180,45
+upSkYkCp0DtcuQzVs1oo;,;Verde,Station_Wagon;18,180,Branco;17,180,45
 Zw6njl9Bbe6qZbFsf4yq;1000,Hibrido;Verde,SUV;19,185,Azul;15,200,45
 reFSBY4Tq3ky7zZnfhFq;1000,Eletrico;Vermelho,Truck;15,215,Preto;17,215,70
 UDHeRLeVTeh7Nq1NJnkr;1400,Gasoleo;Verde,Truck;16,180,Preto;18,175,55
@@ -81,7 +81,7 @@ ssN30C0VWvTqVCYvJc1H;2000,Gasolina;Vermelho,Minivan;17,145,Cinzento;17,125,45
 u9gD8nnmfbTi5mCBtSxS;1000,Eletrico;Azul,Hatchback;17,170,Vermelho;17,185,65
 uBQgR4u4frK1HATMWd1o;2000,Gasolina;Azul,Sedan;16,165,Cinzento;16,130,60
 hGl1ztlu0LyGD4Gst3iF;1800,Gasoleo;Verde,Convertible;16,200,Vermelho;17,145,65
-rPqska2lnVAe0SibbMEd;1400,Hibrido;Azul,Convertible;16,140,Branco;17,215,55
+rPqska2lnVAe0SibbMEd;1400,Hibrido;,;16,140,Branco;17,215,55
 u743A6yQiyWfSZEUHpok;1200,Gasolina;Preto,Coupe;19,200,Vermelho;15,225,45
 y2l7lumxRM1wYDKbiVPt;2000,Gasolina;Cinzento,Convertible;17,160,Vermelho;18,195,40
 P4d6uLxOGlskGcyfErfx;2000,Eletrico;Vermelho,Hatchback;18,180,Amarelo;16,165,50
@@ -103,7 +103,7 @@ P4pUF879hsDXEOI62EMr;1800,Hibrido;Vermelho,Minivan;16,160,Azul;18,185,55
 bgI4NqZY3mllzFeeuvZ7;1200,Hibrido;Verde,Station_Wagon;16,155,Vermelho;18,220,55
 ivDNGCAoM8So0QkkiRUL;2000,Eletrico;Amarelo,Truck;16,215,Preto;16,225,50
 iyCDRkDDLeHAPcd8DInI;2000,Hibrido;Cinzento,Hatchback;15,180,Cinzento;17,195,45
-g7IKzXvW6krIeQyza0Fm;1200,Hibrido;Preto,Hatchback;16,155,Cinzento;18,165,70
+g7IKzXvW6krIeQyza0Fm;1200,Hibrido;Preto,Hatchback;,,;18,165,70
 ZDyQZfVukUOJivQCtFpM;1000,Gasoleo;Verde,Convertible;16,175,Azul;18,175,70
 6r3BXB8hF7zn9s5LVq9k;1200,Gasoleo;Cinzento,Hatchback;16,165,Cinzento;17,145,50
 iCFGz7LgMdlBx40jKWxS;1200,Hibrido;Branco,Coupe;16,195,Verde;16,200,75
@@ -196,7 +196,7 @@ SVmUspVpl32D632KiWXd;1400,Gasoleo;Branco,Minivan;15,145,Vermelho;18,155,65
 QUvJ6b5JZIqijbHiicu4;1000,Gasolina;Preto,Sedan;15,220,Verde;17,155,60
 brqf9tIDRwPmd6VNwyYY;1800,Hibrido;Cinzento,Minivan;17,190,Cinzento;16,215,75
 V9PUIQ5WIQcyUQSGr0aO;2000,Eletrico;Verde,Sedan;19,165,Preto;19,155,70
-9ZsKdqO5FxKsfZ7zmKfZ;1800,Hibrido;Azul,Station_Wagon;15,195,Azul;16,220,65
+9ZsKdqO5FxKsfZ7zmKfZ;1800,Hibrido;Azul,Station_Wagon;15,195,Azul;,,
 THktx1snu9Ur25ksCgka;1000,Hibrido;Verde,Station_Wagon;17,130,Amarelo;15,190,80
 h3cCpp7LopLgDd8sd7f8;1000,Gasoleo;Verde,Sedan;18,215,Vermelho;15,180,80
 SgHBZVAsy9JzTVyZojrb;1200,Gasoleo;Branco,Minivan;16,190,Cinzento;16,170,40

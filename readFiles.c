@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "./Motor/Motor.h"
-#include "./Chassi/Chassi.h"
-#include "./Jante/Jante.h"
-#include "./Pneu/Pneu.h"
-#include "./Carro/Carro.h"
+#include "Motor.h"
+#include "Chassi.h"
+#include "Jante.h"
+#include "Pneu.h"
+#include "Carro.h"
 #include "readFiles.h"
 
 #define ERR_FOPEN "Error: could not open file."
@@ -16,52 +16,53 @@
 #define WARN_NO_PRODUCTION_INIT "Warning: No production done initiated yet."
 #define ERR_NO_FILES "No files were specified"
 
-Motor* pegaMotor(FILE* filePointer)
+Motor pegaMotor(FILE* filePointer)
 {
-	Motor *tmp = (Motor *) malloc(sizeof(Motor));
-	if (tmp == NULL)
-		printf(ERR_MEM);
+	//declara variaveis
+	struct Motor motor;
 
 	char numSerie[21];
 	char potencia[5];
 	char fuel[10];
 
-	fscanf(filePointer, ",%20s,%4s,",numSerie,potencia);
-	fscanf(filePointer, " %9[^\n]",fuel);
+	fscanf(filePointer, ",%20s,%4s,",numSerie,potencia);//pega variaveis do input
+	fscanf(filePointer, " %9[^\n]",fuel);//pega variaveis do input
 
-	strcpy(tmp->numSerie,numSerie);
-	tmp->potencia=atoi(potencia);
-	strcpy(tmp->type_of_fuel,fuel);
+	//atribui ao motor declarado
+	strcpy(motor.numSerie,numSerie);
+	motor.potencia=atoi(potencia);//converte pra int
+	strcpy(motor.type_of_fuel,fuel);
+	motor.next=NULL;
 
-	return tmp;
+	return motor;//devolve motor montado
 }
 
-Chassi* pegaChassi(FILE* filePointer)
+Chassi pegaChassi(FILE* filePointer)
 {
-	Chassi *tmp = (Chassi *) malloc(sizeof(Chassi));
-	if (tmp == NULL)
-		printf(ERR_MEM);
+	//declara variaveis
+	struct Chassi chassi;
 
 	char rest[4];
 	char numSerie[21];
 	char color[11];
 	char modelo[128];
 
-	fscanf(filePointer, "%2s,%20s,%10[^,]s",rest,numSerie,color);
-	fscanf(filePointer, " ,%127[^\n]",modelo);
+	fscanf(filePointer, "%2s,%20s,%10[^,]s",rest,numSerie,color);//pega variaveis do input
+	fscanf(filePointer, " ,%127[^\n]",modelo);//pega variaveis do input
 
-	strcpy(tmp->numSerie,numSerie);
-	strcpy(tmp->color,color);
-	strcpy(tmp->modelo,modelo);
+	//atribui ao motor declarado
+	strcpy(chassi.numSerie,numSerie);
+	strcpy(chassi.color,color);
+	strcpy(chassi.modelo,modelo);
+	chassi.next=NULL;
 
-	return tmp;
+	return chassi;//devolve chassi montado
 }
 
-Jante* pegaJante(FILE* filePointer)
+Jante pegaJante(FILE* filePointer)
 {
-	Jante *tmp = (Jante *) malloc(sizeof(Jante));
-	if (tmp == NULL)
-		printf(ERR_MEM);
+	//declara variaveis
+	struct Jante jante;
 
 	char rest[4];
 	char numSerie[21];
@@ -69,96 +70,103 @@ Jante* pegaJante(FILE* filePointer)
 	char largura[4];
 	char color[10];
 
-	fscanf(filePointer, "%1s,%20s,%2s,%3s,",rest,numSerie,diametro,largura);
-	fscanf(filePointer, " %9[^\n]",color);
+	fscanf(filePointer, "%1s,%20s,%2s,%3s,",rest,numSerie,diametro,largura);//pega variaveis do input
+	fscanf(filePointer, " %9[^\n]",color);//pega variaveis do input
 
-	strcpy(tmp->numSerie,numSerie);
-	tmp->diametro = atoi(diametro);
-	tmp->largura = atoi(largura);
-	strcpy(tmp->color,color);
+	//atribui ao motor declarado
+	strcpy(jante.numSerie,numSerie);
+	jante.diametro = atoi(diametro);//converte pra int
+	jante.largura = atoi(largura);//converte pra int
+	strcpy(jante.color,color);
+	jante.next=NULL;
 
-	return tmp;
+	return jante;//devolve jante montado
 }
 
-Pneu* pegaPneu(FILE* filePointer)
+Pneu pegaPneu(FILE* filePointer)
 {
-	Pneu *tmp = (Pneu *) malloc(sizeof(Pneu));
-	if (tmp == NULL)
-		printf(ERR_MEM);
+	//declara variaveis
+	struct Pneu pneu;
 
 	char numSerie[21];
 	char diametro[3];
 	char largura[4];
 	char altura[3];
 
-	fscanf(filePointer, ",%20s,%2s,%3s,",numSerie,diametro,largura);
-	fscanf(filePointer, " %2[^\n]",altura);
+	fscanf(filePointer, ",%20s,%2s,%3s,",numSerie,diametro,largura);//pega variaveis do input
+	fscanf(filePointer, " %2[^\n]",altura);//pega variaveis do input
 
-	strcpy(tmp->numSerie,numSerie);
-	tmp->diametro = atoi(diametro);
-	tmp->largura = atoi(largura);
-	tmp->altura = atoi(altura);
+	//atribui ao motor declarado
+	strcpy(pneu.numSerie,numSerie);
+	pneu.diametro=atoi(diametro);//converte pra int
+	pneu.largura=atoi(largura);//converte pra int
+	pneu.altura=atoi(altura);//converte pra int
+	pneu.next=NULL;
 
-	return tmp;
+	return pneu;//devolve pneu montado
 }
 
 void leFicheiroInventario(QueueMotor *listaMotores,QueueChassi *listaChassi,
 QueueJante *listaJante,QueuePneu *listaPneu, char* file)
 {
-	char *localFile = strcat(file,".inventario");
+	char *localFile = strcat(file,".inventario");//coloca a extensao
 
-	FILE *filePointer = fopen(localFile, "r");	
-
-	if (filePointer == NULL)
+	FILE *filePointer = fopen(localFile, "r");//abre arquivo em modo leitura	
+	if (filePointer == NULL)//verifica se e null
 	{
 		puts(ERR_FOPEN);
 		return;
 	}
-	while(!feof(filePointer))
+	while(!feof(filePointer))//enquanto tiver linha a ser lida
 	{
-		char type[6];
+		char type[6]="";//reset type
 		
-		fscanf(filePointer, "%5s",type);
+		fscanf(filePointer, "%5s",type);//tipo de peca a ser lida
+
+		if (strcmp(type,"")==0)//se for vazio é pq acabou a leitura
+		{
+			break;
+		}
 		
-		if (strncmp(type,"Motor",1)==0)
+		if (strncmp(type,"Motor",1)==0)//se for motor 
 		{
-			struct Motor* aux = pegaMotor(filePointer);
-			queueInsertMotor(listaMotores,*aux);
+			struct Motor aux = pegaMotor(filePointer);//monta e devolve o motor
+			queueInsertMotor(listaMotores,aux);//insere o motor
 		}
-		else if (strcmp(type,"Chass")==0)
+		else if (strcmp(type,"Chass")==0)//se for chassi
 		{
-			struct Chassi* aux = pegaChassi(filePointer);
-			queueInsertChassi(listaChassi,*aux);
+			struct Chassi aux = pegaChassi(filePointer);//monta e devolve o chassi
+			queueInsertChassi(listaChassi,aux);//insere o chassi
 		}
-		else if (strcmp(type,"Jante")==0)
+		else if (strcmp(type,"Jante")==0)//se for jante
 		{
-			struct Jante* aux = pegaJante(filePointer);
-			queueInsertJante(listaJante,*aux);
+			struct Jante aux = pegaJante(filePointer);//monta e devolve o jante
+			queueInsertJante(listaJante,aux);//insere o jante
 		}
-		else if (strcmp(type,"Pneus")==0)
+		else if (strcmp(type,"Pneus")==0)//se for pneu
 		{
-			struct Pneu* aux = pegaPneu(filePointer);
-			queueInsertPneu(listaPneu,*aux);
+			struct Pneu aux = pegaPneu(filePointer);//monta e devolve o pneu
+			queueInsertPneu(listaPneu,aux);//insere o pneu
 		}
 	}
-	fclose(filePointer);
+	fclose(filePointer);//fecha arquivo
 }
 
 void leFicheiroPedidos(QueuePedidos *listaPedidos,char* file)
 {
-	char *localFile = strcat(strtok(file,"."),".pedidos");
+	char *localFile = strcat(strtok(file,"."),".pedidos");//coloca a extensao
 
-	FILE *filePointer = fopen(localFile, "r");	
-
-	if (filePointer == NULL)
+	FILE *filePointer = fopen(localFile, "r");//abre arquivo em modo leitura
+	if (filePointer == NULL)//valida se é null
 	{
 		puts(ERR_FOPEN);
 		return;
 	}
 
-	while(!feof(filePointer))
+	while(!feof(filePointer))//enquanto tiver linha a ser lida
 	{
-		char numPedido[21];
+		//reset das variaveis
+		char numPedido[21]="";
 
 		char MotorPotencia[5]="";
 		char Motor_fuel[9]="";
@@ -174,75 +182,75 @@ void leFicheiroPedidos(QueuePedidos *listaPedidos,char* file)
 		char PneuLargura[4]="";
 		char PneuAltura[4]="";
 
-		fscanf(filePointer,"%20s",numPedido);
 
-		fscanf(filePointer,";%[^,]s",MotorPotencia);
-		fscanf(filePointer,",%[^;]s",Motor_fuel);
+		//atribuindo valores as variaveis pela linha
+		fscanf(filePointer," %20s",numPedido);
 
-		fscanf(filePointer,";%[^,]s",ChassiColor);
-		fscanf(filePointer,",%[^;]s",ChassiModelo);
+		fscanf(filePointer,";%4[^,]s",MotorPotencia);
+		fscanf(filePointer,",%8[^;]s",Motor_fuel);
 
-		fscanf(filePointer,";%[^,]s",JanteDiametro);
-		fscanf(filePointer,",%[^,]s",JanteLargura);
-		fscanf(filePointer,",%[^;]s",JanteColor);
+		fscanf(filePointer,";%9[^,]s",ChassiColor);
+		fscanf(filePointer,",%127[^;]s",ChassiModelo);
 
-		fscanf(filePointer,";%[^,]s",PneuDiametro);
-		fscanf(filePointer,",%[^,]s",PneuLargura);
-		fscanf(filePointer,",%[^\n]s",PneuAltura);
+		fscanf(filePointer,";%3[^,]s",JanteDiametro);
+		fscanf(filePointer,",%3[^,]s",JanteLargura);
+		fscanf(filePointer,",%9[^;]s",JanteColor);
 
-		Pedido *tmp = (Pedido *) malloc(sizeof(Pedido));
-		if (tmp == NULL)
-			printf(ERR_MEM);
+		fscanf(filePointer,";%3[^,]s",PneuDiametro);
+		fscanf(filePointer,",%3[^,]s",PneuLargura);
+		fscanf(filePointer,",%3[^\n]s",PneuAltura);
+		
+		if (strcmp(numPedido,"")==0)//se for vazio é pq acabou a leitura
+		{
+			break;
+		}
+		
+		//variavel para montar pedido
+		struct Pedido pedido;
 
-		// printf("%s = Motor{%s,%s} Chassi={%s,%s} Jantes={%s,%s,%s} Pneus={%s,%s,%s}\n",
-		// numPedido,MotorPotencia,Motor_fuel,ChassiColor,ChassiModelo,JanteDiametro,JanteLargura,
-		// JanteColor,PneuDiametro,PneuLargura,PneuAltura);
+		strcpy(pedido.numPedido, numPedido);//coloca numero de serie
 
-		strcpy(tmp->numPedido, numPedido);
+		pedido.Motorpotencia = atoi(MotorPotencia);//passa pra int
+		pedido.JanteDiametro = atoi(JanteDiametro);//passa pra int
+		pedido.JanteLargura = atoi(JanteLargura);//passa pra int
+		pedido.PneuDiametro = atoi(PneuDiametro);//passa pra int
+		pedido.PneuLargura = atoi(PneuLargura);//passa pra int
+		pedido.PneuAltura = atoi(PneuAltura);//passa pra int
 
-		tmp->Motorpotencia = atoi(MotorPotencia);
+		//verifica o tamanho para saber se é necessario colocar zerar a string
 		if (strlen(Motor_fuel)>2)
 		{
-			strcpy(tmp->Motor_fuel,Motor_fuel);
+			strcpy(pedido.Motor_fuel,Motor_fuel);
 		}else
 		{
-			tmp->Motor_fuel[0] = '\0';
+			pedido.Motor_fuel[0] = '\0';
 		}
 
-		
 		if (strlen(ChassiColor)>2)
 		{
-			strcpy(tmp->ChassiColor,ChassiColor);
+			strcpy(pedido.ChassiColor,ChassiColor);
 		}else
 		{
-			tmp->ChassiColor[0] = '\0';
+			pedido.ChassiColor[0] = '\0';
 		}
 
-		
 		if (strlen(ChassiModelo)>2)
 		{
-			strcpy(tmp->ChassiModelo,ChassiModelo);
+			strcpy(pedido.ChassiModelo,ChassiModelo);
 		}else
 		{
-			tmp->ChassiModelo[0] = '\0';
+			pedido.ChassiModelo[0] = '\0';
 		}
 
-		tmp->JanteDiametro = atoi(JanteDiametro);
-		tmp->JanteLargura = atoi(JanteLargura);
-		
 		if (strlen(JanteColor)>2)
 		{
-			strcpy(tmp->JanteColor, JanteColor);
+			strcpy(pedido.JanteColor, JanteColor);
 		}else
 		{
-			tmp->JanteColor[0] = '\0';
+			pedido.JanteColor[0] = '\0';
 		}
 
-		tmp->PneuDiametro = atoi(PneuDiametro);
-		tmp->PneuLargura = atoi(PneuLargura);
-		tmp->PneuAltura = atoi(PneuAltura);
-
-		queueInsertPedido(listaPedidos,*tmp);
+		queueInsertPedido(listaPedidos,pedido);//insere pedido
 	}
-	fclose(filePointer);
+	fclose(filePointer);//fecha arquivo
 }

@@ -12,506 +12,305 @@
 
 void iniciarProducao (QueueMotor *listaMotores,QueueChassi *listaChassis,
 QueueJante *listaJantes,QueuePneu *listaPneus,QueueCarro *listaCarrosProduzidos,
-QueueCarro *listaCarrosNaoProduzidos, QueuePedidos listaPedidos)
+QueuePedidos *listaPedidosNaoProduzidos, QueuePedidos listaPedidos)
 {
-	int pussuiMotor;
-	int possuiChassi;
-	int possuiJantes;
-	int possuiPneu;
-	
-	Pedido *pedido = (Pedido*) malloc(sizeof(Pedido));
-	Carro *aux = (Carro*) malloc(sizeof(Carro));
-	if (pedido == NULL || aux==NULL)
+	if (listaMotores->head==NULL || listaChassis->head==NULL || 
+	listaJantes->head==NULL || listaPneus->head==NULL)//valida se as lista não são vazias 
 	{
-		printf(ERR_MEM);
 		return;
 	}
-	
-	for (pedido = listaPedidos.head ; pedido->next != NULL ; pedido = pedido -> next)
+	Pedido *pedido;
+
+	//percorre todos os pedidos da lista
+	for (pedido = listaPedidos.head ; pedido != NULL ; pedido = pedido -> next)
 	{
-		pussuiMotor = possuiPecaMotor(listaMotores,*pedido,aux);
-		possuiChassi = possuiPecaChassi(listaChassis,*pedido,aux);
-		possuiJantes = possuiPecaJantes(listaJantes,*pedido,aux);
-		possuiPneu = possuiPecaPneus(listaPneus,*pedido,aux);
+		int pussuiMotor = possuiPecaMotor(listaMotores,*pedido);//retorna 1 se tiver motor especidicado
+		int possuiChassi = possuiPecaChassi(listaChassis,*pedido);//retorna 1 se tiver chassi especidicado
+		int possuiJantes = possuiPecaJantes(listaJantes,*pedido);//retorna 1 se tiver jante especidicado
+		int possuiPneu = possuiPecaPneus(listaPneus,*pedido);//retorna 1 se tiver pneu especidicado
 
-		strcpy(aux->numPedido,pedido->numPedido);
-
-		if (pussuiMotor && possuiChassi && possuiJantes  && possuiPneu )
+		if (pussuiMotor && possuiChassi && possuiJantes  && possuiPneu )//se possuir todos
 		{
-			aux->estado=1;
-			queueInsertCarro(listaCarrosProduzidos,*aux);
-
-			// int teste = queueRemoveMotor(listaMotores, *aux->motor);
-
-			// printf("queueRemoveMotor = %d\n",teste);
-
-			if(queueRemoveMotor(listaMotores, *aux->motor)==0)
-			{
-				printf("MOTOR  = %s\n",aux->motor->numSerie);
-			}
-			if(!queueRemoveChassi(listaChassis,*aux->chassi))
-			{
-				printf("CHASSI = %s\n",aux->chassi->numSerie);
-			}
-			if(!queueRemoveJante(listaJantes,*aux->jante))
-			{
-				printf("JANTE  = %s\n",aux->jante->numSerie);
-			}
-			if(!queueRemovePneu(listaPneus, *aux->pneu))
-			{
-				printf("PNEU   = %s\n",aux->pneu->numSerie);
-			}
+			//produzir carro
+			listaCarroProduzido(listaCarrosProduzidos,pedido,listaMotores,
+			listaChassis,listaJantes,listaPneus);
 		}else
 		{
-			aux->estado=2;
-			if (!pussuiMotor)
-			{
-				if (pedido->Motorpotencia!=0)
-					aux->motor->potencia=pedido->Motorpotencia;
-				else
-					aux->motor->potencia=0;
-				
-				if (strcmp(pedido->Motor_fuel,"")!=0)
-					strcpy(aux->motor->type_of_fuel,pedido->Motor_fuel);
-				else
-					strcpy(aux->motor->type_of_fuel,"");
-			}else
-			{
-				aux->motor->potencia=0;
-				strcpy(aux->motor->type_of_fuel,"");
-			}
-
-			if (!possuiChassi)
-			{
-				if (strcmp(pedido->ChassiColor,"")!=0)
-					strcpy(aux->chassi->color,pedido->ChassiColor);
-				else
-					strcpy(aux->chassi->color,"");
-				
-				if (strcmp(pedido->ChassiModelo,"")!=0)
-					strcpy(aux->chassi->modelo,pedido->ChassiModelo);
-				else
-					strcpy(aux->chassi->modelo,"");
-			}else
-			{
-				strcpy(aux->chassi->color,"");
-				strcpy(aux->chassi->modelo,"");
-			}
-			
-			if (!possuiJantes)
-			{
-				if (pedido->JanteDiametro!=0)
-					aux->jante->diametro=pedido->JanteDiametro;
-				else
-					aux->jante->diametro=0;
-				
-				if (pedido->JanteLargura!=0)
-					aux->jante->largura= pedido->JanteLargura;
-				else
-					aux->jante->largura=0;
-
-				if (strcmp(pedido->JanteColor,"")!=0)
-					strcpy(aux->jante->color,pedido->JanteColor);
-				else
-					strcpy(aux->jante->color,"");
-			}else
-			{
-				aux->jante->diametro=0;
-				aux->jante->largura=0;
-				strcpy(aux->jante->color,"");
-			}
-			
-			if (!possuiPneu)
-			{
-				if (pedido->PneuDiametro!=0)
-					aux->pneu->diametro=pedido->PneuDiametro;
-				else
-					aux->pneu->diametro=0;
-				
-				if (pedido->PneuLargura!=0)
-					aux->pneu->largura= pedido->PneuLargura;
-				else
-					aux->pneu->largura=0;
-
-				if (pedido->PneuAltura!=0)
-					aux->pneu->altura=pedido->PneuAltura;
-				else
-					aux->pneu->altura=0;
-			}else
-			{
-				aux->pneu->diametro=0;
-				aux->pneu->largura=0;
-				aux->pneu->altura=0;
-			}
-			
-			queueInsertCarro(listaCarrosNaoProduzidos,*aux);
+			//colocar na lista de não produzido
+			listaCarroNaoProduzido(listaPedidosNaoProduzidos,*pedido);
 		}
 	}
 }
 
-int possuiPecaMotor(QueueMotor *listaMotores,Pedido t,Carro*aux)
+void listaCarroNaoProduzido(QueuePedidos *q,Pedido pedido)
 {
-	Motor *tmp = (Motor*) malloc(sizeof(Motor));
-	if (tmp == NULL)
-		printf(ERR_MEM);
-	if (t.Motorpotencia==0 && strcmp(t.Motor_fuel,"")==0)
+	//monta pedido
+	struct Pedido pedidoIncompleto;
+
+	strcpy(pedidoIncompleto.numPedido,pedido.numPedido);
+	pedidoIncompleto.next=NULL;
+
+	pedidoIncompleto.Motorpotencia=pedido.Motorpotencia;
+	strcpy(pedidoIncompleto.Motor_fuel,pedido.Motor_fuel);
+
+	strcpy(pedidoIncompleto.ChassiModelo,pedido.ChassiModelo);
+	strcpy(pedidoIncompleto.ChassiColor,pedido.ChassiColor);
+
+	pedidoIncompleto.JanteDiametro=pedido.JanteDiametro;
+	pedidoIncompleto.JanteLargura=pedido.JanteLargura;
+	strcpy(pedidoIncompleto.JanteColor,pedido.JanteColor);
+
+	pedidoIncompleto.PneuDiametro=pedido.PneuDiametro;
+	pedidoIncompleto.PneuLargura=pedido.PneuLargura;
+	pedidoIncompleto.PneuAltura=pedido.PneuAltura;
+
+	//adiciona pedido na lista de pedidos NÃO PRODUZIDOS
+	queueInsertPedido(q,pedidoIncompleto);
+}
+
+void listaCarroProduzido(QueueCarro *q,Pedido *pedido,QueueMotor *listaMotores,QueueChassi *listaChassis,
+QueueJante *listaJantes,QueuePneu *listaPneus)
+{
+	//monta CARRO
+	Carro carroProduzido ;
+	
+	Motor *motor = (Motor *) malloc(sizeof(Motor));;
+	Chassi *chassi= (Chassi *) malloc(sizeof(Chassi));;
+	Jante *jante= (Jante *) malloc(sizeof(Jante));;
+	Pneu *pneu= (Pneu *) malloc(sizeof(Pneu));;
+
+	strcpy(carroProduzido.numPedido,pedido->numPedido);
+	carroProduzido.estado=1;
+	carroProduzido.next=NULL;
+
+	//devolve o motor com as especificações pedidas
+	*motor = pegaMotorLista(listaMotores,pedido->Motorpotencia,pedido->Motor_fuel);
+
+	//devolve o chassi com as especificações pedidas
+	*chassi = pegaChassiLista(listaChassis,pedido->ChassiColor,pedido->ChassiModelo);
+
+	//devolve o jante com as especificações pedidas
+	*jante = pegaJanteLista(listaJantes,pedido->JanteDiametro,pedido->JanteLargura,pedido->JanteColor);
+
+	//devolve o pneu com as especificações pedidas
+	*pneu = pegaPneuLista(listaPneus,pedido->PneuDiametro,pedido->PneuLargura,pedido->PneuAltura);
+
+
+	carroProduzido.motor=motor;//atribui o motor ao carro
+
+	carroProduzido.chassi=chassi;//atribui o chassi ao carro
+
+	carroProduzido.jante=jante;//atribui o jante ao carro
+
+	carroProduzido.pneu=pneu;//atribui o pneu ao carro
+
+
+	queueInsertCarro(q,carroProduzido);//insere o carro na lista de carros produzidos
+
+	removeMotor(listaMotores,motor->numSerie);//remove do stock o motor utilizado
+	removeChassi(listaChassis,chassi->numSerie);//remove do stock o chassi utilizado
+	removeJante(listaJantes,jante->numSerie);//remove do stock o jante utilizado
+	removePneu(listaPneus,pneu->numSerie);//remove do stock o pneu utilizado
+}
+
+int possuiPecaMotor(QueueMotor *listaMotores,Pedido t)
+{
+	if (listaMotores->head==NULL)//varifica se é null
+		return 0;
+	
+	Motor *tmp ;
+
+	if (t.Motorpotencia==0 && strcmp(t.Motor_fuel,"")==0)//nenhum dado especificado
 	{
-		Motor *motor = (Motor*) malloc(sizeof(Motor));
-		if (motor == NULL)
-			printf(ERR_MEM);
-
-		strcpy(motor->numSerie,listaMotores->head->numSerie);
-		motor->potencia=listaMotores->head->potencia;
-		strcpy(motor->numSerie,listaMotores->head->numSerie);
-
-		aux->motor= motor;
 		return 1;
-	}else{
-		for (tmp = listaMotores->head ; tmp->next != NULL ; tmp = tmp -> next)
+	}else if (t.Motorpotencia!=0 && strcmp(t.Motor_fuel,"")==0)//potencia especificada
+	{
+		for (tmp = listaMotores->head ; tmp != NULL ; tmp = tmp -> next)
 		{
-			if ( (t.Motorpotencia!=0 && strcmp(t.Motor_fuel,"")==0 && t.Motorpotencia==tmp->potencia) ||
-			(t.Motorpotencia==0 && strcmp(t.Motor_fuel,"")!=0 && strcmp(t.Motor_fuel,tmp->type_of_fuel)==0) ||
-			(t.Motorpotencia!=0 && strcmp(t.Motor_fuel,"")!=0 && 
-			t.Motorpotencia==tmp->potencia && strcmp(t.Motor_fuel,tmp->type_of_fuel)==0))
-			{
-				Motor *motor = (Motor*) malloc(sizeof(Motor));
-				if (motor == NULL)
-					printf(ERR_MEM);
+			if (t.Motorpotencia==tmp->potencia)
+				return 1;	
+		}
+	}else if (t.Motorpotencia==0 && strcmp(t.Motor_fuel,"")!=0)//combustivel especificado
+	{
+		for (tmp = listaMotores->head ; tmp != NULL ; tmp = tmp -> next)
+		{
+			if (strcmp(t.Motor_fuel,tmp->type_of_fuel)==0)
+				return 1;	
+		}
+	}else //todos especificados
+	{
+		for (tmp = listaMotores->head ; tmp != NULL ; tmp = tmp -> next)
+		{
+			if (t.Motorpotencia==tmp->potencia && strcmp(t.Motor_fuel,tmp->type_of_fuel)==0)
+				return 1;	
+		}
+	}
 
-				strcpy(motor->numSerie,tmp->numSerie);
-				motor->potencia=tmp->potencia;
-				strcpy(motor->type_of_fuel,tmp->type_of_fuel);
+	return 0;	
+}
 
-				aux->motor= motor;
+int possuiPecaChassi(QueueChassi *listaChassis,Pedido t)
+{
+	if (listaChassis->head==NULL)
+		return 0;
+
+	Chassi *tmp;
+
+	if (strcmp(t.ChassiColor,"")==0 && strcmp(t.ChassiModelo,"")==0)//nenhum dado especificado
+	{
+		return 1;
+	}else if (strcmp(t.ChassiColor,"")==0 && strcmp(t.ChassiModelo,"")!=0)//apenas modelo especificado
+	{
+		for (tmp = listaChassis->head ; tmp != NULL ; tmp = tmp -> next)
+		{
+			if (strcmp(t.ChassiModelo,tmp->modelo)==0)
+				return 1;	
+		}
+	}else if (strcmp(t.ChassiColor,"")!=0 && strcmp(t.ChassiModelo,"")==0)//apenas cor especificado
+	{
+		for (tmp = listaChassis->head ; tmp != NULL ; tmp = tmp -> next)
+		{
+			if (strcmp(t.ChassiColor,tmp->color)==0)
+				return 1;	
+		}
+	}else//cor e modelo especificados
+	{
+		for (tmp = listaChassis->head ; tmp != NULL ; tmp = tmp -> next)
+		{
+			if (strcmp(t.ChassiColor,tmp->color)==0 && strcmp(t.ChassiModelo,tmp->modelo)==0)
+				return 1;	
+		}
+	}
+
+	return 0;	
+}
+
+int possuiPecaJantes(QueueJante *listaJante,Pedido t)
+{
+	if (listaJante->head==NULL)
+		return 0;
+
+	Jante *tmp ;
+	
+	if (t.JanteDiametro==0 && t.JanteLargura==0 && strcmp(t.JanteColor,"")==0)//nenhum dado especificado
+	{
+		return 1;
+	}else if (t.JanteDiametro==0 && t.JanteLargura==0 && strcmp(t.JanteColor,"")!=0)//cor especificada
+	{
+		for (tmp = listaJante->head ; tmp!= NULL ; tmp = tmp -> next)
+		{
+			if (strcmp(t.JanteColor,tmp->color)==0)
 				return 1;
-			}
 		}
-	}
-	return 0;	
-}
-
-int possuiPecaChassi(QueueChassi *listaChassis,Pedido t,Carro*aux)
-{
-	Chassi *tmp = (Chassi*) malloc(sizeof(Chassi));
-	if (tmp == NULL)
-		printf(ERR_MEM);
-
-	if (strcmp(t.ChassiColor,"")==0 && strcmp(t.ChassiModelo,"")==0)
+	}else if (t.JanteDiametro==0 && t.JanteLargura!=0 && strcmp(t.JanteColor,"")==0)//largura especificada
 	{
-		Chassi *chassi = (Chassi*) malloc(sizeof(Chassi));
-		if (chassi == NULL)
-			printf(ERR_MEM);
-
-		strcpy(chassi->numSerie,listaChassis->head->numSerie);
-		strcpy(chassi->color,listaChassis->head->color);
-		strcpy(chassi->modelo,listaChassis->head->modelo);
-
-		aux->chassi= chassi;
-		return 1;
-
-	}else
-	{
-		for (tmp = listaChassis->head ; tmp->next != NULL ; tmp = tmp -> next)
+		for (tmp = listaJante->head ; tmp!= NULL ; tmp = tmp -> next)
 		{
-			if ((strcmp(t.ChassiColor,"")!=0 && strcmp(t.ChassiModelo,"")==0 && strcmp(t.ChassiColor,tmp->color)) || 
-			(strcmp(t.ChassiColor,"")==0 && strcmp(t.ChassiModelo,"")!=0 && strcmp(t.ChassiModelo,tmp->modelo)==0) ||
-			(strcmp(t.ChassiColor,"")!=0 && strcmp(t.ChassiModelo,"")!=0 && 
-			strcmp(t.ChassiColor,tmp->color) && strcmp(t.ChassiModelo,tmp->modelo)==0))
-			{
-				Chassi *chassi = (Chassi*) malloc(sizeof(Chassi));
-				if (tmp == NULL)
-					printf(ERR_MEM);
-
-				strcpy(chassi->numSerie,tmp->numSerie);
-				strcpy(chassi->color,tmp->color);
-				strcpy(chassi->modelo,tmp->modelo);
-
-				aux->chassi= chassi;
+			if (t.JanteLargura==tmp->largura)
 				return 1;
-			}
 		}
-	}
-	return 0;	
-}
-
-int possuiPecaJantes(QueueJante *listaJante,Pedido t,Carro*aux)
-{
-	Jante *tmp = (Jante*) malloc(sizeof(Jante));
-	if (tmp == NULL)
-		printf(ERR_MEM);
-
-	if (t.JanteDiametro==0 && t.JanteLargura==0 && strcmp(t.JanteColor,"")==0)
+	}else if (t.JanteDiametro==0 && t.JanteLargura!=0 && strcmp(t.JanteColor,"")!=0)//largura e cor especificada
 	{
-		Jante *jante = (Jante*) malloc(sizeof(Jante));
-		if (jante == NULL)
-			printf(ERR_MEM);
-
-		strcpy(jante->numSerie,listaJante->head->numSerie);
-		jante->diametro=listaJante->head->diametro;
-		jante->largura=listaJante->head->largura;
-		strcpy(jante->color,listaJante->head->color);
-
-		aux->jante= jante;
-		return 1;
-	}else
-	{
-		for (tmp = listaJante->head ; tmp->next != NULL ; tmp = tmp -> next)
+		for (tmp = listaJante->head ; tmp!= NULL ; tmp = tmp -> next)
 		{
-			if (t.JanteDiametro!=0 && t.JanteLargura!=0 && strcmp(t.JanteColor,"")!=0)
-			{
-				if (t.JanteDiametro==tmp->diametro && t.JanteLargura==tmp->largura && strcmp(t.JanteColor,tmp->color)==0)
-				{
-					Jante *jante = (Jante*) malloc(sizeof(Jante));
-					if (jante == NULL)
-						printf(ERR_MEM);
-
-					strcpy(jante->numSerie,tmp->numSerie);
-					jante->diametro=tmp->diametro;
-					jante->largura=tmp->largura;
-					strcpy(jante->color,tmp->color);
-
-					aux->jante= jante;
-					return 1;
-				}
-			}else if (t.JanteDiametro!=0 && t.JanteLargura==0 && strcmp(t.JanteColor,"")==0)
-			{
-				if (t.JanteDiametro==tmp->diametro)
-				{
-					Jante *jante = (Jante*) malloc(sizeof(Jante));
-					if (jante == NULL)
-						printf(ERR_MEM);
-
-					strcpy(jante->numSerie,tmp->numSerie);
-					jante->diametro=tmp->diametro;
-					jante->largura=tmp->largura;
-					strcpy(jante->color,tmp->color);
-
-					aux->jante= jante;
-					return 1;
-				}
-			}else if (t.JanteDiametro==0 && t.JanteLargura!=0 && strcmp(t.JanteColor,"")==0)
-			{
-				if (t.JanteLargura==tmp->largura)
-				{
-					Jante *jante = (Jante*) malloc(sizeof(Jante));
-					if (jante == NULL)
-						printf(ERR_MEM);
-
-					strcpy(jante->numSerie,tmp->numSerie);
-					jante->diametro=tmp->diametro;
-					jante->largura=tmp->largura;
-					strcpy(jante->color,tmp->color);
-
-					aux->jante= jante;
-					return 1;
-				}
-			}else if (t.JanteDiametro==0 && t.JanteLargura==0 && strcmp(t.JanteColor,"")!=0)
-			{
-				if (strcmp(t.JanteColor,tmp->color)==0)
-				{
-					Jante *jante = (Jante*) malloc(sizeof(Jante));
-					if (jante == NULL)
-						printf(ERR_MEM);
-
-					strcpy(jante->numSerie,tmp->numSerie);
-					jante->diametro=tmp->diametro;
-					jante->largura=tmp->largura;
-					strcpy(jante->color,tmp->color);
-
-					aux->jante= jante;
-					return 1;
-				}
-			}else if (t.JanteDiametro!=0 && t.JanteLargura!=0 && strcmp(t.JanteColor,"")==0)
-			{
-				if (t.JanteDiametro==tmp->diametro && t.JanteLargura==tmp->largura)
-				{
-					Jante *jante = (Jante*) malloc(sizeof(Jante));
-					if (jante == NULL)
-						printf(ERR_MEM);
-
-					strcpy(jante->numSerie,tmp->numSerie);
-					jante->diametro=tmp->diametro;
-					jante->largura=tmp->largura;
-					strcpy(jante->color,tmp->color);
-
-					aux->jante= jante;
-					return 1;
-				}
-			}else if (t.JanteDiametro==0 && t.JanteLargura!=0 && strcmp(t.JanteColor,"")!=0)
-			{
-				if (t.JanteLargura==tmp->largura && strcmp(t.JanteColor,tmp->color)==0)
-				{
-					Jante *jante = (Jante*) malloc(sizeof(Jante));
-					if (jante == NULL)
-						printf(ERR_MEM);
-
-					strcpy(jante->numSerie,tmp->numSerie);
-					jante->diametro=tmp->diametro;
-					jante->largura=tmp->largura;
-					strcpy(jante->color,tmp->color);
-
-					aux->jante= jante;
-					return 1;
-				}
-			}else if (t.JanteDiametro!=0 && t.JanteLargura==0 && strcmp(t.JanteColor,"")!=0)
-			{
-				if (t.JanteDiametro==tmp->diametro && strcmp(t.JanteColor,tmp->color)==0)
-				{
-					Jante *jante = (Jante*) malloc(sizeof(Jante));
-					if (jante == NULL)
-						printf(ERR_MEM);
-
-					strcpy(jante->numSerie,tmp->numSerie);
-					jante->diametro=tmp->diametro;
-					jante->largura=tmp->largura;
-					strcpy(jante->color,tmp->color);
-
-					aux->jante= jante;
-					return 1;
-				}
-			}
+			if (t.JanteLargura==tmp->largura &&	strcmp(t.JanteColor,tmp->color)==0)
+				return 1;
 		}
-	}
-	return 0;	
-}
-
-int possuiPecaPneus(QueuePneu *listaPneu,Pedido t,Carro*aux)
-{
-	Pneu *tmp = (Pneu*) malloc(sizeof(Pneu));
-	if (tmp == NULL)
-		printf(ERR_MEM);
-
-	if (t.PneuDiametro==0 && t.PneuLargura==0 && t.PneuAltura==0)
+	}else if (t.JanteDiametro!=0 && t.JanteLargura==0 && strcmp(t.JanteColor,"")==0)//diametro especificada
 	{
-		Pneu *pneu = (Pneu*) malloc(sizeof(Pneu));
-		if (pneu == NULL)
-			printf(ERR_MEM);
-
-		strcpy(pneu->numSerie,listaPneu->head->numSerie);
-		pneu->diametro=listaPneu->head->diametro;
-		pneu->largura=listaPneu->head->largura;
-		pneu->altura=listaPneu->head->altura;
-
-		aux->pneu= pneu;
-		return 1;
-	}else
-	{
-		for (tmp = listaPneu->head ; tmp->next != NULL ; tmp = tmp -> next)
+		for (tmp = listaJante->head ; tmp!= NULL ; tmp = tmp -> next)
 		{
-			if (t.PneuDiametro!=0 && t.PneuLargura!=0 && t.PneuAltura!=0)
-			{
-				if (t.PneuDiametro==tmp->diametro && t.PneuLargura==tmp->largura && t.PneuAltura == tmp->altura)
-				{
-					Pneu *pneu = (Pneu*) malloc(sizeof(Pneu));
-					if (pneu == NULL)
-						printf(ERR_MEM);
-
-					strcpy(pneu->numSerie,tmp->numSerie);
-					pneu->diametro=tmp->diametro;
-					pneu->largura=tmp->largura;
-					pneu->altura=tmp->altura;
-
-					aux->pneu= pneu;
-					return 1;
-				}
-			}else if (t.PneuDiametro!=0 && t.PneuLargura==0 && t.PneuAltura ==0)
-			{
-				if (t.PneuDiametro==tmp->diametro)
-				{
-					Pneu *pneu = (Pneu*) malloc(sizeof(Pneu));
-					if (pneu == NULL)
-						printf(ERR_MEM);
-
-					strcpy(pneu->numSerie,tmp->numSerie);
-					pneu->diametro=tmp->diametro;
-					pneu->largura=tmp->largura;
-					pneu->altura=tmp->altura;
-
-					aux->pneu= pneu;
-					return 1;
-				}
-			}else if (t.PneuDiametro==0 && t.PneuLargura!=0 && t.PneuAltura ==0)
-			{
-				if (t.PneuLargura==tmp->largura)
-				{
-					Pneu *pneu = (Pneu*) malloc(sizeof(Pneu));
-					if (pneu == NULL)
-						printf(ERR_MEM);
-
-					strcpy(pneu->numSerie,tmp->numSerie);
-					pneu->diametro=tmp->diametro;
-					pneu->largura=tmp->largura;
-					pneu->altura=tmp->altura;
-
-					aux->pneu= pneu;
-					return 1;
-				}
-			}else if (t.PneuDiametro==0 && t.PneuLargura==0 && t.PneuAltura!=0)
-			{
-				if (t.PneuAltura == tmp->altura)
-				{
-					Pneu *pneu = (Pneu*) malloc(sizeof(Pneu));
-					if (pneu == NULL)
-						printf(ERR_MEM);
-
-					strcpy(pneu->numSerie,tmp->numSerie);
-					pneu->diametro=tmp->diametro;
-					pneu->largura=tmp->largura;
-					pneu->altura=tmp->altura;
-
-					aux->pneu= pneu;
-					return 1;
-				}
-			}else if (t.PneuDiametro!=0 && t.PneuLargura!=0 && t.PneuAltura ==0)
-			{
-				if (t.PneuDiametro==tmp->diametro && t.PneuLargura==tmp->largura)
-				{
-					Pneu *pneu = (Pneu*) malloc(sizeof(Pneu));
-					if (pneu == NULL)
-						printf(ERR_MEM);
-
-					strcpy(pneu->numSerie,tmp->numSerie);
-					pneu->diametro=tmp->diametro;
-					pneu->largura=tmp->largura;
-					pneu->altura=tmp->altura;
-
-					aux->pneu= pneu;
-					return 1;
-				}
-			}else if (t.PneuDiametro==0 && t.PneuLargura!=0 && t.PneuAltura!=0)
-			{
-				if (t.PneuLargura==tmp->largura && t.PneuAltura==tmp->altura)
-				{
-					Pneu *pneu = (Pneu*) malloc(sizeof(Pneu));
-					if (pneu == NULL)
-						printf(ERR_MEM);
-
-					strcpy(pneu->numSerie,tmp->numSerie);
-					pneu->diametro=tmp->diametro;
-					pneu->largura=tmp->largura;
-					pneu->altura=tmp->altura;
-
-					aux->pneu= pneu;
-					return 1;
-				}
-			}else if (t.PneuDiametro!=0 && t.PneuLargura==0 && t.PneuAltura!=0)
-			{
-				if (t.PneuDiametro==tmp->diametro && t.PneuAltura == tmp->altura)
-				{
-					Pneu *pneu = (Pneu*) malloc(sizeof(Pneu));
-					if (pneu == NULL)
-						printf(ERR_MEM);
-
-					strcpy(pneu->numSerie,tmp->numSerie);
-					pneu->diametro=tmp->diametro;
-					pneu->largura=tmp->largura;
-					pneu->altura=tmp->altura;
-
-					aux->pneu= pneu;
-					return 1;
-				}
-			}
+			if (t.JanteDiametro==tmp->diametro)
+				return 1;
+		}
+	}else if (t.JanteDiametro!=0 && t.JanteLargura==0 && strcmp(t.JanteColor,"")!=0)//diametro e cor especificada
+	{
+		for (tmp = listaJante->head ; tmp!= NULL ; tmp = tmp -> next)
+		{
+			if (t.JanteDiametro==tmp->diametro && strcmp(t.JanteColor,tmp->color)==0)
+				return 1;
+		}
+	}else if (t.JanteDiametro!=0 && t.JanteLargura!=0 && strcmp(t.JanteColor,"")==0)//diametro e largular especificada
+	{
+		for (tmp = listaJante->head ; tmp!= NULL ; tmp = tmp -> next)
+		{
+			if (t.JanteDiametro==tmp->diametro && t.JanteLargura==tmp->largura)
+				return 1;
+		}
+	}else //todos especificados
+	{
+		for (tmp = listaJante->head ; tmp!= NULL ; tmp = tmp -> next)
+		{
+			if (t.JanteDiametro==tmp->diametro && t.JanteLargura==tmp->largura &&
+				strcmp(t.JanteColor,tmp->color)==0)
+				return 1;
 		}
 	}
+
+	return 0;
+}	
+
+int possuiPecaPneus(QueuePneu *listaPneu,Pedido t)
+{
+	if (listaPneu->head==NULL)
+	{
+		return 0;
+	}
+	Pneu *tmp;
+
+	if (t.PneuDiametro==0 && t.PneuLargura==0 && t.PneuAltura==0)//nenhum dado especificado
+	{
+		return 1;
+	}else if (t.PneuDiametro==0 && t.PneuLargura==0 && t.PneuAltura!=0)//altura especificada
+	{
+				for (tmp = listaPneu->head ; tmp != NULL ; tmp = tmp -> next)
+		{
+			if (t.PneuDiametro==tmp->diametro && t.PneuLargura==tmp->largura && t.PneuAltura == tmp->altura)
+				return 1;
+		}
+	}else if (t.PneuDiametro==0 && t.PneuLargura!=0 && t.PneuAltura==0)//largura especificada
+	{
+				for (tmp = listaPneu->head ; tmp != NULL ; tmp = tmp -> next)
+		{
+			if (t.PneuDiametro==tmp->diametro && t.PneuLargura==tmp->largura && t.PneuAltura == tmp->altura)
+				return 1;
+		}
+	}else if (t.PneuDiametro==0 && t.PneuLargura!=0 && t.PneuAltura!=0)//largura e algura especificadas
+	{
+				for (tmp = listaPneu->head ; tmp != NULL ; tmp = tmp -> next)
+		{
+			if (t.PneuDiametro==tmp->diametro && t.PneuLargura==tmp->largura && t.PneuAltura == tmp->altura)
+				return 1;
+		}
+	}else if (t.PneuDiametro!=0 && t.PneuLargura==0 && t.PneuAltura==0)//diametro especificado
+	{
+				for (tmp = listaPneu->head ; tmp != NULL ; tmp = tmp -> next)
+		{
+			if (t.PneuDiametro==tmp->diametro && t.PneuLargura==tmp->largura && t.PneuAltura == tmp->altura)
+				return 1;
+		}
+	}else if (t.PneuDiametro!=0 && t.PneuLargura==0 && t.PneuAltura!=0)//diametro e altura especificados
+	{
+				for (tmp = listaPneu->head ; tmp != NULL ; tmp = tmp -> next)
+		{
+			if (t.PneuDiametro==tmp->diametro && t.PneuLargura==tmp->largura && t.PneuAltura == tmp->altura)
+				return 1;
+		}
+	}else if (t.PneuDiametro!=0 && t.PneuLargura!=0 && t.PneuAltura==0)//diametro e largura especificados
+	{
+				for (tmp = listaPneu->head ; tmp != NULL ; tmp = tmp -> next)
+		{
+			if (t.PneuDiametro==tmp->diametro && t.PneuLargura==tmp->largura && t.PneuAltura == tmp->altura)
+				return 1;
+		}
+	}else //todos especificados
+	{
+				for (tmp = listaPneu->head ; tmp != NULL ; tmp = tmp -> next)
+		{
+			if (t.PneuDiametro==tmp->diametro && t.PneuLargura==tmp->largura && t.PneuAltura == tmp->altura)
+				return 1;
+		}
+	}
+
 	return 0;	
 }
